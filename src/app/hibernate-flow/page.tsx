@@ -173,47 +173,7 @@ export default function HibernateFlow() {
           </button>
         </div>
 
-        {/* Student Object Bubble Animation */}
-        <AnimatePresence>
-          {step >= 1 && step <= 4 && (
-            <motion.div
-              key="student-bubble-animated"
-              initial={{ 
-                opacity: 0, 
-                scale: 0.5,
-                x: (javaAppRightRef.current?.offsetLeft || 0) + ((javaAppRightRef.current?.offsetWidth || 0) / 2) - 24,
-                y: (javaAppRightRef.current?.offsetTop || 0) + ((javaAppRightRef.current?.offsetHeight || 0) / 2) - 24
-              }}
-              animate={{
-                x: step === 1 ? (javaAppRightRef.current?.offsetLeft || 0) + ((javaAppRightRef.current?.offsetWidth || 0) / 2) - 24 :
-                   step === 3 ? (hibernateRef.current?.offsetLeft || 0) + ((hibernateRef.current?.offsetWidth || 0) / 2) - 24 : 
-                   (javaAppRightRef.current?.offsetLeft || 0) + ((javaAppRightRef.current?.offsetWidth || 0) / 2) - 24,
-                y: step === 1 ? (javaAppRightRef.current?.offsetTop || 0) + ((javaAppRightRef.current?.offsetHeight || 0) / 2) - 24 :
-                   step === 3 ? (hibernateRef.current?.offsetTop || 0) + ((hibernateRef.current?.offsetHeight || 0) / 2) - 24 : 
-                   (javaAppRightRef.current?.offsetTop || 0) + ((javaAppRightRef.current?.offsetHeight || 0) / 2) - 24,
-                opacity: step === 1 ? 1 : (step === 4 ? 0 : 1),
-                scale: 1,
-              }}
-              exit={{ opacity: 0, scale: 0.5 }}
-              transition={{ type: "spring", damping: 15, stiffness: 100 }}
-              style={{
-                position: "absolute",
-                left: 0,
-                top: 0,
-                transform: "translate(-50%, -50%)",
-                zIndex: 10,
-              }}
-              className="rounded-full bg-blue-100 border-2 border-blue-500 flex flex-col items-center justify-center text-sm p-2 text-center shadow-lg w-48 h-48"
-            >
-              <p className="font-bold">Student Object</p>
-              <p>Name: {initialStudent.name}</p>
-              <p>Marks: {initialStudent.marks}</p>
-              <p>Gender: {initialStudent.gender}</p>
-              <p>Email: {initialStudent.email}</p>
-              <p>Phone: {initialStudent.phone}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Remove the original Student Object Bubble Animation section */}
 
       {/* Main content layout */}
       <div className="w-full max-w-6xl flex flex-col gap-4 relative z-0">
@@ -231,15 +191,77 @@ export default function HibernateFlow() {
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 h-64 relative">
               {/* Vertical Divider in the center */}
               <div className="hidden md:block absolute top-0 left-1/2 -translate-x-1/2 h-full w-1 bg-gray-700 dark:bg-gray-300 z-10" />
-              {/* Code Box */}
+            {/* Code Box */}
               <div ref={codeBoxRef} className="border border-gray-300 dark:border-gray-700 p-4 rounded-lg overflow-auto bg-gray-900 text-white text-sm font-mono relative h-60">
                 <h3 className="font-semibold mb-2 text-lg text-center text-gray-200 dark:text-gray-100">Code</h3>
-                <pre className="whitespace-pre-wrap">{javaCode}</pre>
-                </div>
-              {/* Right side empty */}
-              <div ref={javaAppRightRef} className="flex items-center justify-center relative"></div>
-            </CardContent>
-          </Card>
+              <pre className="whitespace-pre-wrap">{javaCode}</pre>
+            </div>
+              {/* Right side with student object */}
+            <div ref={javaAppRightRef} className="flex items-center justify-center relative">
+                {/* Student Object inside the right empty space - smaller size */}
+                <AnimatePresence>
+                  {step >= 1 && step <= 2 && (
+                    <motion.div
+                      key="student-bubble-in-right"
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{
+                        opacity: 1,
+                        scale: 1,
+                      }}
+                      exit={{ opacity: 0, scale: 0.5 }}
+                      transition={{ duration: 0.5 }}
+                      className="rounded-full bg-blue-100 border-2 border-blue-500 flex flex-col items-start justify-center text-xs p-4 text-left shadow-lg w-48 h-48"
+                    >
+                      <span className="font-bold text-xs mb-1">Student Object</span>
+                      <span className="text-xs">Name: <span className="font-medium">{initialStudent.name}</span></span>
+                      <span className="text-xs">Marks: <span className="font-medium">{initialStudent.marks}</span></span>
+                      <span className="text-xs">Gender: <span className="font-medium">{initialStudent.gender}</span></span>
+                      <span className="text-xs truncate">Email: <span className="font-medium">{initialStudent.email}</span></span>
+                      <span className="text-xs">Phone: <span className="font-medium">{initialStudent.phone}</span></span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+            </div>
+          </CardContent>
+        </Card>
+
+          {/* Animated object moving from right div to JPA */}
+          <AnimatePresence>
+            {step === 3 && (
+              <motion.div
+                key="student-bubble-moving"
+                initial={{ 
+                  x: (javaAppRightRef.current?.offsetLeft || 0) + ((javaAppRightRef.current?.offsetWidth || 0) / 2) - 48/2,
+                  y: (javaAppRightRef.current?.offsetTop || 0) + ((javaAppRightRef.current?.offsetHeight || 0) / 2) - 48/2,
+                  opacity: 1,
+                  scale: 1
+                }}
+                animate={{
+                  x: (hibernateRef.current?.offsetLeft || 0) + ((hibernateRef.current?.offsetWidth || 0) / 2) - 48/2,
+                  y: (hibernateRef.current?.offsetTop || 0) + ((hibernateRef.current?.offsetHeight || 0) / 2) - 48/2,
+                  opacity: 1,
+                  scale: 1,
+                }}
+                exit={{ opacity: 0, scale: 0.3 }}
+                transition={{ type: "spring", damping: 15, stiffness: 100, duration: 0.4 }}
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                  transform: "translate(-50%, -50%)",
+                  zIndex: 10,
+                }}
+                className="rounded-full bg-blue-100 border-2 border-blue-500 flex flex-col items-start justify-center text-xs p-4 text-left shadow-lg w-48 h-48"
+              >
+                <span className="font-bold text-xs mb-1">Student Object</span>
+                <span className="text-xs">Name: <span className="font-medium">{initialStudent.name}</span></span>
+                <span className="text-xs">Marks: <span className="font-medium">{initialStudent.marks}</span></span>
+                <span className="text-xs">Gender: <span className="font-medium">{initialStudent.gender}</span></span>
+                <span className="text-xs truncate">Email: <span className="font-medium">{initialStudent.email}</span></span>
+                <span className="text-xs">Phone: <span className="font-medium">{initialStudent.phone}</span></span>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Hibernate Section */}
           <div className="flex justify-center w-full mt-4">
