@@ -16,44 +16,108 @@ interface Student {
   phone: string;
 }
 
-// The Java code snippet
-const javaCode = `package com.kodnest.main;
+// The Java code snippet for Student (KodnestStudent)
+const studentJavaCode = `package com.kodnest.entity;
 
-import com.kodnest.entity.Student;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
+import jakarta.persistence.*;
 
-public class Application {
-    public static void main(String[] args) {
-        // Load Configuration and Build SessionFactory
-        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+@Entity
+@Table(name = "kodneststudent")
+public class KodnestStudent {
 
-        // Open Session
-        Session session = sessionFactory.openSession();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-        // Begin Transaction
-        Transaction transaction = session.beginTransaction();
+    private String name;
+    private String email;
+    private String phone;
 
-        // Create and Persist Student
-        Student student = new Student();
-        student.setName("Ravi Kumar");
-        student.setMarks(85.5);
-        student.setGender("Male");
-        student.setEmail("ravi.kumar@gmail.com");
-        student.setPhone("9876543210");
-        session.persist(student);
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address address;
 
-        // Commit Transaction
-        transaction.commit();
+    // Getters and Setters
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public String getPhone() {
+        return phone;
+    }
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    public Address getAddress() {
+        return address;
+    }
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+}`;
 
-        // Confirmation
-        System.out.println("Student saved successfully!");
+// The Java code snippet for Address
+const addressJavaCode = `package com.kodnest.entity;
 
-        // Close Session and SessionFactory
-        session.close();
-        sessionFactory.close();
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "address")
+public class Address {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    private String street;
+    private String city;
+    private String state;
+    private String zipcode;
+
+    // Getters and Setters
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+    public String getStreet() {
+        return street;
+    }
+    public void setStreet(String street) {
+        this.street = street;
+    }
+    public String getCity() {
+        return city;
+    }
+    public void setCity(String city) {
+        this.city = city;
+    }
+    public String getState() {
+        return state;
+    }
+    public void setState(String state) {
+        this.state = state;
+    }
+    public String getZipcode() {
+        return zipcode;
+    }
+    public void setZipcode(String zipcode) {
+        this.zipcode = zipcode;
     }
 }`;
 
@@ -81,6 +145,35 @@ export default function HibernateFlow() {
     phone: "9876543210",
   };
 
+  // New state for right card animation
+  const [showStudentObj, setShowStudentObj] = useState(false);
+  const [showAddressObj, setShowAddressObj] = useState(false);
+  const [showArrow, setShowArrow] = useState(false);
+  // Refs for arrow positioning
+  const addressIdRef = useRef<HTMLSpanElement>(null);
+  const addressObjRef = useRef<HTMLDivElement>(null);
+  const [arrowPos, setArrowPos] = useState<{start: {x: number, y: number}, end: {x: number, y: number}} | null>(null);
+
+  // Address data
+  const addressData = {
+    id: 1,
+    street: "123 Kodnest Lane",
+    city: "Bengaluru",
+    state: "Karnataka",
+    zipcode: "560037",
+  };
+
+  // Handle Start button
+  const handleStart = () => {
+    setStep(1);
+    setShowStudentObj(false);
+    setShowAddressObj(false);
+    setShowArrow(false);
+    setTimeout(() => setShowStudentObj(true), 100); // slight delay for smoothness
+    setTimeout(() => setShowAddressObj(true), 1100);
+    setTimeout(() => setShowArrow(true), 1400);
+  };
+
   // Animation step timings (ms)
   const STEP_DELAYS = [2000, 2000, 2000, 2000, 1000];
 
@@ -106,12 +199,61 @@ export default function HibernateFlow() {
     }
   }, [step]);
 
+  // Calculate arrow position after both objects are visible
+  useEffect(() => {
+    function updateArrow() {
+      if (showStudentObj && showAddressObj) {
+        const startEl = addressIdRef.current;
+        const endEl = addressObjRef.current;
+        if (startEl && endEl) {
+          const startRect = startEl.getBoundingClientRect();
+          const endRect = endEl.getBoundingClientRect();
+          let end = {
+            x: endRect.left - 16,
+            y: endRect.top + endRect.height / 2,
+          };
+          const start = {
+            x: startRect.right - startRect.width / 4,
+            y: startRect.top + startRect.height / 2,
+          };
+          setArrowPos({ start, end });
+        }
+      } else {
+        setArrowPos(null);
+      }
+    }
+    updateArrow();
+    window.addEventListener('resize', updateArrow);
+    window.addEventListener('scroll', updateArrow, true);
+    return () => {
+      window.removeEventListener('resize', updateArrow);
+      window.removeEventListener('scroll', updateArrow, true);
+    };
+  }, [showStudentObj, showAddressObj]);
+
+  // State for hibernate highlight
+  const [hibernateHighlight, setHibernateHighlight] = useState(false);
+  const hibernateBoxRef = useRef<HTMLDivElement>(null);
+
+  // After arrow is placed, highlight hibernate.cfg.xml for 1 second
+  useEffect(() => {
+    if (arrowPos && showStudentObj && showAddressObj) {
+      setHibernateHighlight(true);
+      const timer = setTimeout(() => setHibernateHighlight(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [arrowPos, showStudentObj, showAddressObj]);
+
   // Reset function
   const resetFlow = () => {
     setStep(0);
     setShowLines(false);
     setShowData(false);
     setDataColumns([false, false, false, false, false, false]);
+    setShowStudentObj(false);
+    setShowAddressObj(false);
+    setShowArrow(false);
+    setHibernateHighlight(false);
   };
 
   // Dark mode effect
@@ -149,7 +291,7 @@ export default function HibernateFlow() {
         <div className="w-full flex items-center justify-between mb-4">
           {/* Left: Start and Reset Buttons */}
           <div className="flex items-center gap-2">
-            <Button onClick={() => setStep(1)} className="px-4 py-2 text-sm">Start</Button>
+            <Button onClick={handleStart} className="px-4 py-2 text-sm">Start</Button>
             <Button onClick={resetFlow} className="px-4 py-2 text-sm bg-red-500 hover:bg-red-600">Reset</Button>
           </div>
           {/* Center: Java App Heading */}
@@ -177,91 +319,111 @@ export default function HibernateFlow() {
 
       {/* Main content layout */}
       <div className="w-full max-w-6xl flex flex-col gap-4 relative z-0">
-        {/* Java App Section */}
-          <Card className="border-2 border-black dark:border-gray-700 relative p-4 bg-white dark:bg-gray-800">
-            {/* hibernate.cfg.xml box with highlight animation */}
-            <div className={cn(
-              "absolute left-4 border-2 bg-white dark:bg-gray-800 flex flex-col items-center justify-center z-10",
-              step === 2 && "border-yellow-400 shadow-[0_0_12px_4px_rgba(255,221,51,0.5)] animate-pulse",
-              "border-black dark:border-gray-700"
-            )} style={{ bottom: -40, width: '80px', height: '32px' }}>
-              <span className="text-[10px] font-bold text-gray-800 dark:text-gray-100">hibernate.cfg.xml</span>
-              <div className="text-xs text-gray-600 dark:text-gray-300">{"</>"}</div>
+        {/* Code Blocks Section: Left block with both codes side by side, right block empty */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-auto">
+          {/* Left: Combined Code Block */}
+          <Card className="relative border-2 border-black dark:border-gray-700 bg-white dark:bg-gray-800 p-0 flex flex-col">
+            <CardContent className="p-0">
+              <div className="flex flex-col md:flex-row min-h-0 items-stretch">
+                {/* Student.java */}
+                <div className="flex-1 flex flex-col min-w-0 border-b md:border-b-0 md:border-r border-gray-700">
+                  <div className="bg-gray-800 text-yellow-300 text-xs font-semibold px-3 py-2 border-b border-gray-700">Student.java</div>
+                  <div className="overflow-auto bg-gray-900 text-white text-xs font-mono p-3 max-h-40">
+                    <pre className="whitespace-pre-wrap">{studentJavaCode}</pre>
+                  </div>
+                </div>
+                {/* Address.java */}
+                <div className="flex-1 flex flex-col min-w-0">
+                  <div className="bg-gray-800 text-yellow-300 text-xs font-semibold px-3 py-2 border-b border-gray-700">Address.java</div>
+                  <div className="overflow-auto bg-gray-900 text-white text-xs font-mono p-3 max-h-40">
+                    <pre className="whitespace-pre-wrap">{addressJavaCode}</pre>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+            {/* Tiny hibernate.cfg.xml box at bottom left, overlapping border */}
+            <div
+              ref={hibernateBoxRef}
+              className={
+                `absolute -bottom-15 left-0 z-10 border bg-white rounded w-[100px] h-[38px] flex flex-col items-center justify-center text-[10px] shadow transition-all duration-300 ` +
+                (hibernateHighlight ? 'border-2 border-yellow-400 bg-yellow-100 shadow-lg' : 'border-black')
+              }
+            >
+              <span className="font-bold text-[10px] text-gray-800 leading-none">hibernate.cfg.xml</span>
+              <span className="text-[15px] text-gray-700 leading-none">&lt;/&gt;</span>
             </div>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 h-64 relative">
-              {/* Vertical Divider in the center */}
-              <div className="hidden md:block absolute top-0 left-1/2 -translate-x-1/2 h-full w-1 bg-gray-700 dark:bg-gray-300 z-10" />
-            {/* Code Box */}
-              <div ref={codeBoxRef} className="border border-gray-300 dark:border-gray-700 p-4 rounded-lg overflow-auto bg-gray-900 text-white text-sm font-mono relative h-60">
-                <h3 className="font-semibold mb-2 text-lg text-center text-gray-200 dark:text-gray-100">Code</h3>
-              <pre className="whitespace-pre-wrap">{javaCode}</pre>
-            </div>
-              {/* Right side with student object */}
-            <div ref={javaAppRightRef} className="flex items-center justify-center relative">
-                {/* Student Object inside the right empty space - smaller size */}
+          </Card>
+          {/* Right: Empty Code Block */}
+          <Card className="relative border-2 border-black dark:border-gray-700 bg-white dark:bg-gray-800 p-0 flex flex-col h-60 overflow-visible">
+            <CardContent className="flex-1 flex items-center justify-center text-gray-400 text-sm relative">
+              {/* Animated objects and arrow */}
+              <div className="w-full h-full relative flex items-center justify-center">
+                {/* Student Object */}
                 <AnimatePresence>
-                  {step >= 1 && step <= 2 && (
+                  {showStudentObj && (
                     <motion.div
-                      key="student-bubble-in-right"
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{
-                        opacity: 1,
-                        scale: 1,
-                      }}
-                      exit={{ opacity: 0, scale: 0.5 }}
-                      transition={{ duration: 0.5 }}
-                      className="rounded-full bg-blue-100 border-2 border-blue-500 flex flex-col items-start justify-center text-xs p-4 text-left shadow-lg w-48 h-48"
+                      key="student-obj"
+                      initial={{ opacity: 0, scale: 0.7, y: 0 }}
+                      animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.7 }}
+                      transition={{ duration: 0.4 }}
+                      className="absolute left-2.7 -translate-x-40 -translate-y-10 top-6 w-44 h-44 rounded-full bg-white border-2 border-black flex flex-col items-start justify-center text-xs p-4 text-left shadow z-10 text-gray-900"
                     >
                       <span className="font-bold text-xs mb-1">Student Object</span>
-                      <span className="text-xs">Name: <span className="font-medium">{initialStudent.name}</span></span>
-                      <span className="text-xs">Marks: <span className="font-medium">{initialStudent.marks}</span></span>
-                      <span className="text-xs">Gender: <span className="font-medium">{initialStudent.gender}</span></span>
-                      <span className="text-xs truncate">Email: <span className="font-medium">{initialStudent.email}</span></span>
-                      <span className="text-xs">Phone: <span className="font-medium">{initialStudent.phone}</span></span>
+                      <span className="text-xs">Name: <span className="font-medium">Ravi Kumar</span></span>
+                      <span className="text-xs truncate">Email: <span className="font-medium">ravi.kumar@gmail.com</span></span>
+                      <span className="text-xs">Phone: <span className="font-medium">9876543210</span></span>
+                      <span className="text-xs">address_id: <span ref={addressIdRef} className="font-medium">1</span></span>
                     </motion.div>
                   )}
                 </AnimatePresence>
-            </div>
-          </CardContent>
-        </Card>
-
-          {/* Animated object moving from right div to JPA */}
-          <AnimatePresence>
-            {step === 3 && (
-              <motion.div
-                key="student-bubble-moving"
-                initial={{ 
-                  x: (javaAppRightRef.current?.offsetLeft || 0) + ((javaAppRightRef.current?.offsetWidth || 0) / 2) - 48/2,
-                  y: (javaAppRightRef.current?.offsetTop || 0) + ((javaAppRightRef.current?.offsetHeight || 0) / 2) - 48/2,
-                  opacity: 1,
-                  scale: 1
-                }}
-                animate={{
-                  x: (hibernateRef.current?.offsetLeft || 0) + ((hibernateRef.current?.offsetWidth || 0) / 2) - 48/2,
-                  y: (hibernateRef.current?.offsetTop || 0) + ((hibernateRef.current?.offsetHeight || 0) / 2) - 48/2,
-                  opacity: 1,
-                  scale: 1,
-                }}
-                exit={{ opacity: 0, scale: 0.3 }}
-                transition={{ type: "spring", damping: 15, stiffness: 100, duration: 0.4 }}
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  top: 0,
-                  transform: "translate(-50%, -50%)",
-                  zIndex: 10,
-                }}
-                className="rounded-full bg-blue-100 border-2 border-blue-500 flex flex-col items-start justify-center text-xs p-4 text-left shadow-lg w-48 h-48"
-              >
-                <span className="font-bold text-xs mb-1">Student Object</span>
-                <span className="text-xs">Name: <span className="font-medium">{initialStudent.name}</span></span>
-                <span className="text-xs">Marks: <span className="font-medium">{initialStudent.marks}</span></span>
-                <span className="text-xs">Gender: <span className="font-medium">{initialStudent.gender}</span></span>
-                <span className="text-xs truncate">Email: <span className="font-medium">{initialStudent.email}</span></span>
-                <span className="text-xs">Phone: <span className="font-medium">{initialStudent.phone}</span></span>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                {/* Address Object */}
+                <AnimatePresence>
+                  {showAddressObj && (
+                    <motion.div
+                      key="address-obj"
+                      initial={{ opacity: 0, scale: 0.7, y:20 }}
+                      animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.7 }}
+                      transition={{ duration: 0.4 }}
+                      className="absolute right-4 -translate-x-15 -translate-y-30 top-40 w-44 h-44 rounded-full bg-orange-200 border-2 border-black flex flex-col items-start justify-center text-xs p-4 text-left shadow-lg z-10 text-gray-900"
+                      ref={addressObjRef}
+                    >
+                      <span className="font-bold text-xs mb-1">Address Object</span>
+                      <span className="text-xs">id: <span className="font-medium">1</span></span>
+                      <span className="text-xs">Street: <span className="font-medium">123 Kodnest Lane</span></span>
+                      <span className="text-xs">setCity: <span className="font-medium">Bengaluru</span></span>
+                      <span className="text-xs">State: <span className="font-medium">Karnataka</span></span>
+                      <span className="text-xs">Zipcode: <span className="font-medium">560037</span></span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                {/* Arrow from address_id to Address Object */}
+                {arrowPos && (
+                  <svg
+                    className="pointer-events-none fixed top-0 left-0 z-50"
+                    style={{ width: '100vw', height: '100vh', pointerEvents: 'none' }}
+                  >
+                    <defs>
+                      <marker id="arrowhead2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L8,4 L0,8 L2, Z" fill="#f59e42" />
+                      </marker>
+                    </defs>
+                    <line
+                      x1={arrowPos.start.x}
+                      y1={arrowPos.start.y}
+                      x2={arrowPos.end.x}
+                      y2={arrowPos.end.y}
+                      stroke="#f59e42"
+                      strokeWidth="3"
+                      markerEnd="url(#arrowhead2)"
+                    />
+                  </svg>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
           {/* Hibernate Section */}
           <div className="flex justify-center w-full mt-4">
