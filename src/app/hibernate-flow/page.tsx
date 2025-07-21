@@ -234,13 +234,24 @@ export default function HibernateFlow() {
   // State for hibernate highlight
   const [hibernateHighlight, setHibernateHighlight] = useState(false);
   const hibernateBoxRef = useRef<HTMLDivElement>(null);
+  const [moveObjectsDown, setMoveObjectsDown] = useState(false);
 
   // After arrow is placed, highlight hibernate.cfg.xml for 1 second
   useEffect(() => {
     if (arrowPos && showStudentObj && showAddressObj) {
-      setHibernateHighlight(true);
-      const timer = setTimeout(() => setHibernateHighlight(false), 2000);
-      return () => clearTimeout(timer);
+      // Wait 1 second before highlighting
+      const highlightTimer = setTimeout(() => {
+        setHibernateHighlight(true);
+        // Highlight for 2 seconds, then move objects down
+        const removeHighlightTimer = setTimeout(() => {
+          setHibernateHighlight(false);
+          setMoveObjectsDown(true);
+        }, 2000);
+        // Cleanup for highlight removal
+        return () => clearTimeout(removeHighlightTimer);
+      }, 1000);
+      // Cleanup for initial delay
+      return () => clearTimeout(highlightTimer);
     }
   }, [arrowPos, showStudentObj, showAddressObj]);
 
@@ -254,6 +265,7 @@ export default function HibernateFlow() {
     setShowAddressObj(false);
     setShowArrow(false);
     setHibernateHighlight(false);
+    setMoveObjectsDown(false);
   };
 
   // Dark mode effect
@@ -364,7 +376,7 @@ export default function HibernateFlow() {
                     <motion.div
                       key="student-obj"
                       initial={{ opacity: 0, scale: 0.7, y: 0 }}
-                      animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                      animate={{ opacity: 1, scale: moveObjectsDown ? 0.7 : 1, x: 0, y: moveObjectsDown ? 250 : 0 }}
                       exit={{ opacity: 0, scale: 0.7 }}
                       transition={{ duration: 0.4 }}
                       className="absolute left-2.7 -translate-x-40 -translate-y-10 top-6 w-44 h-44 rounded-full bg-white border-2 border-black flex flex-col items-start justify-center text-xs p-4 text-left shadow z-10 text-gray-900"
@@ -383,7 +395,7 @@ export default function HibernateFlow() {
                     <motion.div
                       key="address-obj"
                       initial={{ opacity: 0, scale: 0.7, y:20 }}
-                      animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                      animate={{ opacity: 1, scale: moveObjectsDown ? 0.7 : 1, x: 0, y: moveObjectsDown ? 250 : 0 }}
                       exit={{ opacity: 0, scale: 0.7 }}
                       transition={{ duration: 0.4 }}
                       className="absolute right-4 -translate-x-15 -translate-y-30 top-40 w-44 h-44 rounded-full bg-orange-200 border-2 border-black flex flex-col items-start justify-center text-xs p-4 text-left shadow-lg z-10 text-gray-900"
@@ -409,14 +421,19 @@ export default function HibernateFlow() {
                         <path d="M0,0 L8,4 L0,8 L2, Z" fill="#f59e42" />
                       </marker>
                     </defs>
-                    <line
+                    <motion.line
                       x1={arrowPos.start.x}
-                      y1={arrowPos.start.y}
+                      y1={moveObjectsDown ? arrowPos.start.y + 250 : arrowPos.start.y}
                       x2={arrowPos.end.x}
-                      y2={arrowPos.end.y}
+                      y2={moveObjectsDown ? arrowPos.end.y + 250 : arrowPos.end.y}
                       stroke="#f59e42"
                       strokeWidth="3"
                       markerEnd="url(#arrowhead2)"
+                      animate={{
+                        y1: moveObjectsDown ? arrowPos.start.y + 250 : arrowPos.start.y,
+                        y2: moveObjectsDown ? arrowPos.end.y + 250 : arrowPos.end.y,
+                      }}
+                      transition={{ duration: 0.4 }}
                     />
                   </svg>
                 )}
@@ -455,63 +472,69 @@ export default function HibernateFlow() {
             </div>
         </div>
 
-          {/* Database Table */}
-          <Card className="border-2 border-black dark:border-gray-700 relative p-4 mt-4 bg-white dark:bg-gray-800">
-          <CardHeader>
-              <CardTitle className="text-center text-2xl text-gray-800 dark:text-gray-100">Database Table</CardTitle>
-          </CardHeader>
-          <CardContent className="overflow-x-auto">
-              <table ref={databaseTableRef} className="w-full text-sm text-left text-gray-800 dark:text-gray-100">
-                <thead className="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-gray-700">
-                <tr>
-                    <th scope="col" className="px-6 py-3 border-r border-gray-300 dark:border-gray-600">ID</th>
-                    <th scope="col" className="px-6 py-3 border-r border-gray-300 dark:border-gray-600">Name</th>
-                    <th scope="col" className="px-6 py-3 border-r border-gray-300 dark:border-gray-600">Marks</th>
-                    <th scope="col" className="px-6 py-3 border-r border-gray-300 dark:border-gray-600">Gender</th>
-                    <th scope="col" className="px-6 py-3 border-r border-gray-300 dark:border-gray-600">Email</th>
-                    <th scope="col" className="px-6 py-3">Phone</th>
-                </tr>
-              </thead>
-              <tbody>
-                <AnimatePresence mode="wait">
-                    {step === 6 ? (
-                    <motion.tr
-                        key="data-row"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.5 }}
-                        className="bg-white dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700"
-                    >
-                        <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
-                          {dataColumns[0] ? initialStudent.id : ""}
-                        </td>
-                        <td className="px-6 py-4">
-                          {dataColumns[1] ? initialStudent.name : ""}
-                        </td>
-                        <td className="px-6 py-4">
-                          {dataColumns[2] ? initialStudent.marks : ""}
-                        </td>
-                        <td className="px-6 py-4">
-                          {dataColumns[3] ? initialStudent.gender : ""}
-                        </td>
-                        <td className="px-6 py-4">
-                          {dataColumns[4] ? initialStudent.email : ""}
-                        </td>
-                        <td className="px-6 py-4">
-                          {dataColumns[5] ? initialStudent.phone : ""}
-                      </td>
-                    </motion.tr>
-                  ) : (
-                      <tr className="bg-white dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700">
-                        <td colSpan={6} className="px-6 py-4 text-center text-gray-400 dark:text-gray-500">No data saved yet.</td>
-                    </tr>
-                  )}
-                </AnimatePresence>
-              </tbody>
-            </table>
-          </CardContent>
-        </Card>
+          {/* Database Tables Side by Side */}
+          <div className="flex flex-col md:flex-row gap-4 w-full mt-4">
+            {/* Student Table */}
+            <div className="flex-1">
+              <Card className="border-2 border-black dark:border-gray-700 relative p-4 bg-white dark:bg-gray-800">
+                <CardHeader>
+                  <CardTitle className="text-center text-xl text-gray-800 dark:text-gray-100">Student Table</CardTitle>
+                </CardHeader>
+                <CardContent className="overflow-x-auto">
+                  <table className="w-full text-sm text-left text-gray-800 dark:text-gray-100">
+                    <thead className="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-gray-700">
+                      <tr>
+                        <th className="px-4 py-2 border-r">ID</th>
+                        <th className="px-4 py-2 border-r">NAME</th>
+                        <th className="px-4 py-2 border-r">EMAIL</th>
+                        <th className="px-4 py-2 border-r">PHONE</th>
+                        <th className="px-4 py-2">ADDRESS_ID</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="px-4 py-2">{initialStudent.id}</td>
+                        <td className="px-4 py-2">{initialStudent.name}</td>
+                        <td className="px-4 py-2">{initialStudent.email}</td>
+                        <td className="px-4 py-2">{initialStudent.phone}</td>
+                        <td className="px-4 py-2">1</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </CardContent>
+              </Card>
+            </div>
+            {/* Address Table */}
+            <div className="flex-1">
+              <Card className="border-2 border-black dark:border-gray-700 relative p-4 bg-white dark:bg-gray-800">
+                <CardHeader>
+                  <CardTitle className="text-center text-xl text-gray-800 dark:text-gray-100">Address Table</CardTitle>
+                </CardHeader>
+                <CardContent className="overflow-x-auto">
+                  <table className="w-full text-sm text-left text-gray-800 dark:text-gray-100">
+                    <thead className="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-gray-700">
+                      <tr>
+                        <th className="px-4 py-2 border-r">ID</th>
+                        <th className="px-4 py-2 border-r">STREET</th>
+                        <th className="px-4 py-2 border-r">CITY</th>
+                        <th className="px-4 py-2 border-r">STATE</th>
+                        <th className="px-4 py-2">ZIPCODE</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="px-4 py-2">1</td>
+                        <td className="px-4 py-2">123 Kodnest Lane</td>
+                        <td className="px-4 py-2">Bengaluru</td>
+                        <td className="px-4 py-2">Karnataka</td>
+                        <td className="px-4 py-2">560037</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
       </div>
       </div>
     </div>
