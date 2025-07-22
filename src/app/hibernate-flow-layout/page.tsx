@@ -157,13 +157,13 @@ public class Application {
           </div>
 
           {/* Hibernate Box */}
-          <Card ref={hibernateRef} className="border-4 border-black p-4 flex-1 min-h-[300px] ml-8 bg-white">
+          <Card ref={hibernateRef} className="border-4 border-black p-4 flex-1 min-h-[100px] ml-8 bg-white">
             <CardHeader>
-              <CardTitle className="text-center text-2xl font-bold text-black">Hibernate</CardTitle>
+              <CardTitle className="text-center text-2xl font-bold bottom - text-black">Hibernate</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-end h-full pb-4">
               {/* JPA Box inside Hibernate */}
-              <div ref={jpaRef} className="border-4 border-black w-32 h-16 flex items-center justify-center bg-white">
+              <div ref={jpaRef} className="border-1 border-black w-2 h-5 flex items-center justify-center bg-white">
                 <div className="text-xl font-bold text-black">JPA</div>
               </div>
             </CardContent>

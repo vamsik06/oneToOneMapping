@@ -171,7 +171,7 @@ export default function HibernateFlow() {
   // Address data
   const addressData = {
     id: 1,
-    street: "123 Kodnest Lane",
+    street: "123 Kodnest...",
     city: "Bengaluru",
     state: "Karnataka",
     zipcode: "560037",
@@ -357,8 +357,9 @@ export default function HibernateFlow() {
   };
 
   return (
-    <div className={cn("min-h-screen p-8 flex flex-col items-center relative overflow-hidden transition-colors")}>
-      <div className={cn("w-full max-w-6xl border-2 border-black dark:border-gray-700 rounded-xl p-4 mb-8", darkMode ? "dark bg-gray-900" : "bg-gray-50")}>
+    <div className={cn("min-h-screen p-8 flex flex-col items-center relative overflow-hidden transition-colors")}> 
+      {/* Main constraint wrapper */}
+      <div className="relative w-full max-w-[800px] max-h-[800px] h-full overflow-auto flex flex-col items-center justify-center border-2 border-black dark:border-gray-700 rounded-xl p-4 mb-8 bg-gray-50 dark:bg-gray-900">
         {/* Heading Row with Buttons and Dark/Light Toggle */}
         <div className="w-full flex items-center justify-between mb-4">
           {/* Left: Start and Reset Buttons */}
@@ -401,24 +402,24 @@ export default function HibernateFlow() {
         {/* Remove the original Student Object Bubble Animation section */}
 
       {/* Main content layout */}
-      <div className="w-full max-w-6xl flex flex-col gap-4 relative z-0">
+      <div className="w-full h-full flex flex-col gap-4 relative z-0">
         {/* Code Blocks Section: Left block with both codes side by side, right block empty */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[220px] max-h-[220px]">
           {/* Left: Combined Code Block */}
-          <Card className="relative border-2 border-black dark:border-gray-700 bg-white dark:bg-gray-800 p-0 flex flex-col">
+          <Card className="relative border-2 border-black dark:border-gray-700 bg-white dark:bg-gray-800 p-0 flex flex-col h-full max-h-full">
             <CardContent className="p-0">
               <div className="flex flex-col md:flex-row min-h-0 items-stretch">
                 {/* Student.java */}
                 <div className="flex-1 flex flex-col min-w-0 border-b md:border-b-0 md:border-r border-gray-700">
                   <div className="bg-gray-800 text-yellow-300 text-xs font-semibold px-3 py-2 border-b border-gray-700">Student.java</div>
-                  <div className="overflow-auto bg-gray-900 text-white text-xs font-mono p-3 max-h-40">
+                  <div className="overflow-auto bg-gray-900 text-white text-xs font-mono p-3 max-h-43">
                     <pre className="whitespace-pre-wrap">{studentJavaCode}</pre>
                   </div>
                 </div>
                 {/* Address.java */}
                 <div className="flex-1 flex flex-col min-w-0">
                   <div className="bg-gray-800 text-yellow-300 text-xs font-semibold px-3 py-2 border-b border-gray-700">Address.java</div>
-                  <div className="overflow-auto bg-gray-900 text-white text-xs font-mono p-3 max-h-40">
+                  <div className="overflow-auto bg-gray-900 text-white text-xs font-mono p-3 max-h-43">
                     <pre className="whitespace-pre-wrap">{addressJavaCode}</pre>
                   </div>
                 </div>
@@ -428,17 +429,17 @@ export default function HibernateFlow() {
             <div
               ref={hibernateBoxRef}
               className={
-                `absolute -bottom-15 left-0 z-10 border bg-white dark:bg-gray-800 rounded w-[100px] h-[38px] flex flex-col items-center justify-center text-[10px] shadow transition-all duration-300 ` +
+                `absolute -bottom-6 left-0 z-10 border bg-white dark:bg-gray-800 rounded w-[85px] h-[26px] flex flex-col items-center justify-center text-[7px] shadow transition-all duration-300 ` +
                 (hibernateHighlight ? 'border-2 border-yellow-400 bg-yellow-100 dark:bg-yellow-900 shadow-lg' : 'border-black dark:border-gray-700')
               }
             >
               <span className="font-bold text-[10px] text-gray-800 dark:text-gray-100 leading-none">hibernate.cfg.xml</span>
-              <span className="text-[15px] text-gray-700 dark:text-gray-200 leading-none">&lt;/&gt;</span>
+
             </div>
           </Card>
           {/* Right: Empty Code Block */}
-          <Card className="relative border-2 border-black dark:border-gray-700 bg-white dark:bg-gray-800 p-0 flex flex-col h-60 overflow-visible">
-            <CardContent className="flex-1 flex items-center justify-center text-gray-400 text-sm relative">
+          <Card className="relative border-2 border-black dark:border-gray-700 bg-white dark:bg-gray-800 p-0 flex flex-col h-full max-h-full">
+            <CardContent className="flex-1 flex items-center justify-center text-gray-400 text-sm relative h-full max-h-full">
               {/* Animated objects and arrow */}
               <div className="w-full h-full relative flex items-center justify-center">
                 {/* Student Object */}
@@ -451,11 +452,11 @@ export default function HibernateFlow() {
                         opacity: fadeObjects ? 0 : 1,
                         scale: moveObjectsDown ? 0.7 : 1,
                         x: 0,
-                        y: moveObjectsDown ? 250 : 0
+                        y: moveObjectsDown ? 240 : 0
                       }}
                       exit={{ opacity: 0, scale: 0.7 }}
                       transition={{ duration: 0.4, opacity: { duration: 0.5 } }}
-                      className="absolute left-2.7 -translate-x-40 -translate-y-10 top-6 w-44 h-44 rounded-full bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 flex flex-col items-start justify-center text-xs p-4 text-left shadow z-10 text-gray-900 dark:text-gray-100"
+                      className="absolute left-2.9 -translate-x-20 -translate-y-7 top-6 w-33 h-33 rounded-full bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 flex flex-col items-start justify-center text-xs p-4 text-left shadow z-10 text-gray-900 dark:text-gray-100"
                     >
                       <span className="font-bold text-xs mb-1">Student Object</span>
                       <span className="text-xs">Name: <span className="font-medium">Ravi Kumar</span></span>
@@ -475,16 +476,16 @@ export default function HibernateFlow() {
                         opacity: fadeObjects ? 0 : 1,
                         scale: moveObjectsDown ? 0.7 : 1,
                         x: 0,
-                        y: moveObjectsDown ? 250 : 0
+                        y: moveObjectsDown ? 220 : 0
                       }}
                       exit={{ opacity: 0, scale: 0.7 }}
                       transition={{ duration: 0.4, opacity: { duration: 0.5 } }}
-                      className="absolute right-4 -translate-x-15 -translate-y-30 top-40 w-44 h-44 rounded-full bg-orange-200 dark:bg-orange-900 border-2 border-black dark:border-gray-700 flex flex-col items-start justify-center text-xs p-4 text-left shadow-lg z-10 text-gray-900 dark:text-gray-100"
+                      className="absolute right-4 -translate-x-2 -translate-y-30 top-40 w-37 h-37 rounded-full bg-orange-200 dark:bg-orange-900 border-2 border-black dark:border-gray-700 flex flex-col items-start justify-center text-xs p-4 text-left shadow-lg z-10 text-gray-900 dark:text-gray-100"
                       ref={addressObjRef}
                     >
                       <span className="font-bold text-xs mb-1">Address Object</span>
                       <span className="text-xs">id: <span className="font-medium">1</span></span>
-                      <span className="text-xs">Street: <span className="font-medium">123 Kodnest Lane</span></span>
+                      <span className="text-xs">Street: <span className="font-medium">123 Kodnest...</span></span>
                       <span className="text-xs">setCity: <span className="font-medium">Bengaluru</span></span>
                       <span className="text-xs">State: <span className="font-medium">Karnataka</span></span>
                       <span className="text-xs">Zipcode: <span className="font-medium">560037</span></span>
@@ -504,16 +505,16 @@ export default function HibernateFlow() {
                     </defs>
                     <motion.line
                       x1={arrowPos.start.x}
-                      y1={moveObjectsDown ? arrowPos.start.y + 250 : arrowPos.start.y}
+                      y1={moveObjectsDown ? arrowPos.start.y + 220 : arrowPos.start.y}
                       x2={arrowPos.end.x}
-                      y2={moveObjectsDown ? arrowPos.end.y + 250 : arrowPos.end.y}
+                      y2={moveObjectsDown ? arrowPos.end.y + 220 : arrowPos.end.y}
                       stroke="#f59e42"
                       strokeWidth="3"
                       markerEnd="url(#arrowhead2)"
                       animate={{
                         opacity: fadeObjects ? 0 : 1,
-                        y1: moveObjectsDown ? arrowPos.start.y + 250 : arrowPos.start.y,
-                        y2: moveObjectsDown ? arrowPos.end.y + 250 : arrowPos.end.y,
+                        y1: moveObjectsDown ? arrowPos.start.y + 220 : arrowPos.start.y,
+                        y2: moveObjectsDown ? arrowPos.end.y + 220 : arrowPos.end.y,
                       }}
                       transition={{ duration: 0.4, opacity: { duration: 0.5 } }}
                     />
@@ -525,14 +526,14 @@ export default function HibernateFlow() {
         </div>
 
           {/* Hibernate Section */}
-          <div className="flex justify-center w-full mt-4">
+          <div className="flex justify-center w-full mt-2 max-h-[250px]">
             <div ref={hibernateRef} className={cn(
-              "relative w-full max-w-4xl min-h-[220px] flex items-center justify-center border-2 bg-white dark:bg-gray-800 p-8",
+              "relative w-full max-w-4xl min-h-[150px] flex items-center justify-center border-2 bg-white dark:bg-gray-800 p-4",
               step === 3 && "border-blue-400 shadow-[0_0_12px_4px_rgba(51,153,255,0.3)]",
               "border-black dark:border-gray-700"
             )}>
               {/* Hibernate Label */}
-              <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 px-4 font-bold text-2xl text-gray-800 dark:text-gray-100">Hibernate</div>
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 px-4 font-bold text-2xl text-gray-800 dark:text-gray-100">Hibernate</div>
               {/* JPA Box with highlight animation */}
               <div
                 ref={el => {
@@ -540,18 +541,18 @@ export default function HibernateFlow() {
                   jpaBoxRef.current = el;
                 }}
                 className={cn(
-                "absolute left-1/2 bottom-10 -translate-x-1/2 translate-y-1/2 border-2 bg-white dark:bg-gray-800 w-48 h-16 flex items-center justify-center",
+                "absolute left-1/2 bottom-10 -translate-x-1/2 translate-y-9 border-2 bg-white dark:bg-gray-800 w-23 h-5 flex items-center justify-center",
                 step === 4 && "border-yellow-400 shadow-[0_0_12px_4px_rgba(255,221,51,0.5)] animate-pulse",
                 "border-black dark:border-gray-700"
                 )}
               >
-                <span className="font-bold text-xl text-gray-800 dark:text-gray-100">JPA</span>
+                <span className="font-bold text-base text-gray-800 dark:text-gray-100">JPA</span>
         </div>
               </div>
             </div>
 
           {/* Database Tables Side by Side */}
-          <div className="flex flex-col md:flex-row gap-4 w-full mt-4 relative">
+          <div className="flex flex-col md:flex-row gap-4 w-full mt-2 relative max-h-[180px]">
             {/* JPA to Table Header Lines */}
             {step === 4 && jpaToHeaders.length > 0 && (
               <svg className="pointer-events-none fixed top-0 left-0 z-50" style={{ width: '100vw', height: '100vh', pointerEvents: 'none' }}>
@@ -571,29 +572,29 @@ export default function HibernateFlow() {
             )}
             {/* Student Table */}
             <div className="flex-1">
-              <Card className="border-2 border-black dark:border-gray-700 relative p-4 bg-white dark:bg-gray-800">
+              <Card className="border-2 border-black dark:border-gray-700 relative  bg-white dark:bg-gray-800 ">
                 <CardHeader>
-                  <CardTitle className="text-center text-xl text-gray-800 dark:text-gray-100">Student Table</CardTitle>
+                  <CardTitle className="text-center text-base text-gray-800 dark:text-gray-100">Student Table</CardTitle>
                 </CardHeader>
                 <CardContent className="overflow-x-auto">
-                  <table className="w-full text-sm text-left text-gray-800 dark:text-gray-100">
-                    <thead className="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-gray-700">
+                  <table className="w-full text-xs text-left text-gray-800 dark:text-gray-100">
+                    <thead className="text-[10px] text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-gray-700">
                       <tr>
-                        {/* <th ref={studentHeaderRefs[0]} className="px-4 py-2 border-r">ID</th> */}
-                        <th ref={el => { studentHeaderRefs.current[1] = el; }} className="px-4 py-2 border-r">NAME</th>
-                        <th ref={el => { studentHeaderRefs.current[2] = el; }} className="px-4 py-2 border-r">EMAIL</th>
-                        <th ref={el => { studentHeaderRefs.current[3] = el; }} className="px-4 py-2 border-r">PHONE</th>
-                        <th ref={el => { studentHeaderRefs.current[4] = el; }} className="px-4 py-2">ADDRESS_ID</th>
+                        {/* <th ref={studentHeaderRefs[0]} className="px-2 py-1 border-r">ID</th> */}
+                        <th ref={el => { studentHeaderRefs.current[1] = el; }} className="px-2 py-1 border-r">NAME</th>
+                        <th ref={el => { studentHeaderRefs.current[2] = el; }} className="px-2 py-1 border-r">EMAIL</th>
+                        <th ref={el => { studentHeaderRefs.current[3] = el; }} className="px-2 py-1 border-r">PHONE</th>
+                        <th ref={el => { studentHeaderRefs.current[4] = el; }} className="px-2 py-1">ADDRESS_ID</th>
                       </tr>
                     </thead>
                     <tbody>
                       {step >= 5 ? (
                         <tr>
-                          {/* <td className="px-4 py-2">{initialStudent.id}</td> */}
-                          <td className="px-4 py-2 text-gray-800 dark:text-gray-100">{initialStudent.name}</td>
-                          <td className="px-4 py-2 text-gray-800 dark:text-gray-100">{initialStudent.email}</td>
-                          <td className="px-4 py-2 text-gray-800 dark:text-gray-100">{initialStudent.phone}</td>
-                          <td className="px-4 py-2">1</td>
+                          {/* <td className="px-2 py-1">{initialStudent.id}</td> */}
+                          <td className="px-2 py-1 text-gray-800 dark:text-gray-100">{initialStudent.name}</td>
+                          <td className="px-2 py-1 text-gray-800 dark:text-gray-100">{initialStudent.email}</td>
+                          <td className="px-2 py-1 text-gray-800 dark:text-gray-100">{initialStudent.phone}</td>
+                          <td className="px-2 py-1">1</td>
                         </tr>
                       ) : null}
                     </tbody>
@@ -603,29 +604,29 @@ export default function HibernateFlow() {
             </div>
             {/* Address Table */}
             <div className="flex-1">
-              <Card className="border-2 border-black dark:border-gray-700 relative p-4 bg-white dark:bg-gray-800">
+              <Card className="border-2 border-black dark:border-gray-700 relative p-1 bg-white dark:bg-gray-800 h-full max-h-full">
           <CardHeader>
-                  <CardTitle className="text-center text-xl text-gray-800 dark:text-gray-100">Address Table</CardTitle>
+                  <CardTitle className="text-center text-base text-gray-800 dark:text-gray-100">Address Table</CardTitle>
           </CardHeader>
           <CardContent className="overflow-x-auto">
-                  <table className="w-full text-sm text-left text-gray-800 dark:text-gray-100">
-                <thead className="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-gray-700">
+                  <table className="w-full text-xs text-left text-gray-800 dark:text-gray-100">
+                <thead className="text-[10px] text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-gray-700">
                 <tr>
-                        <th ref={el => { addressHeaderRefs.current[0] = el; }} className="px-4 py-2 border-r">ID</th>
-                        <th ref={el => { addressHeaderRefs.current[1] = el; }} className="px-4 py-2 border-r">STREET</th>
-                        <th ref={el => { addressHeaderRefs.current[2] = el; }} className="px-4 py-2 border-r">CITY</th>
-                        <th ref={el => { addressHeaderRefs.current[3] = el; }} className="px-4 py-2 border-r">STATE</th>
-                        <th ref={el => { addressHeaderRefs.current[4] = el; }} className="px-4 py-2">ZIPCODE</th>
+                        <th ref={el => { addressHeaderRefs.current[0] = el; }} className="px-2 py-1 border-r">ID</th>
+                        <th ref={el => { addressHeaderRefs.current[1] = el; }} className="px-2 py-1 border-r">STREET</th>
+                        <th ref={el => { addressHeaderRefs.current[2] = el; }} className="px-2 py-1 border-r">CITY</th>
+                        <th ref={el => { addressHeaderRefs.current[3] = el; }} className="px-2 py-1 border-r">STATE</th>
+                        <th ref={el => { addressHeaderRefs.current[4] = el; }} className="px-2 py-1">ZIPCODE</th>
                 </tr>
               </thead>
               <tbody>
                       {step >= 5 ? (
                         <tr>
-                          <td className="px-4 py-2">1</td>
-                          <td className="px-4 py-2">123 Kodnest Lane</td>
-                          <td className="px-4 py-2">Bengaluru</td>
-                          <td className="px-4 py-2">Karnataka</td>
-                          <td className="px-4 py-2">560037</td>
+                          <td className="px-2 py-1">1</td>
+                          <td className="px-2 py-1">123 Kodnest...</td>
+                          <td className="px-2 py-1">Bengaluru</td>
+                          <td className="px-2 py-1">Karnataka</td>
+                          <td className="px-2 py-1">560037</td>
                     </tr>
                       ) : null}
               </tbody>
@@ -634,7 +635,7 @@ export default function HibernateFlow() {
         </Card>
             </div>
           </div>
-      </div>
+        </div>
       </div>
     </div>
   );
