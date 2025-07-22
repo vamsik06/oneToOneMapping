@@ -356,8 +356,17 @@ export default function HibernateFlow() {
     resetFlow();
   };
 
+  // Ensure dark mode applies to the entire page
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
   return (
-    <div className={cn("min-h-screen p-8 flex flex-col items-center relative overflow-hidden transition-colors")}> 
+    <div className={cn("min-h-screen p-8 flex flex-col items-center relative overflow-hidden transition-colors bg-gray-50 dark:bg-gray-900")}> 
       {/* Main constraint wrapper */}
       <div className={cn("relative w-full max-w-[800px] max-h-[800px] h-full overflow-auto flex flex-col items-center justify-center border-2 border-black dark:border-gray-700 rounded-xl p-4 mb-8", darkMode ? "bg-gray-900" : "bg-gray-50")}>
         {/* Heading Row with Buttons and Dark/Light Toggle */}
