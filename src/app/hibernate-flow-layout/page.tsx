@@ -185,34 +185,34 @@ public class Application {
                 <thead className="border-b-4 border-black">
                   <tr>
                     <th
-                      ref={(el) => (tableHeaderRefs.current[0] = el)}
+                      ref={(el) => {tableHeaderRefs.current[0] = el}}
                       scope="col"
                       className="border-r-4 border-black px-6 py-3 font-bold"
                     >
                       Name
                     </th>
                     <th
-                      ref={(el) => (tableHeaderRefs.current[1] = el)}
+                      ref={(el) => {tableHeaderRefs.current[1] = el}}
                       scope="col"
                       className="border-r-4 border-black px-6 py-3 font-bold"
                     >
                       Marks
                     </th>
                     <th
-                      ref={(el) => (tableHeaderRefs.current[2] = el)}
+                      ref={(el) => {tableHeaderRefs.current[2] = el}}
                       scope="col"
                       className="border-r-4 border-black px-6 py-3 font-bold"
                     >
                       Gender
                     </th>
                     <th
-                      ref={(el) => (tableHeaderRefs.current[3] = el)}
+                      ref={(el) => {tableHeaderRefs.current[3] = el}}
                       scope="col"
                       className="border-r-4 border-black px-6 py-3 font-bold"
                     >
                       Email
                     </th>
-                    <th ref={(el) => (tableHeaderRefs.current[4] = el)} scope="col" className="px-6 py-3 font-bold">
+                    <th ref={(el) =>{tableHeaderRefs.current[4] = el}} scope="col" className="px-6 py-3 font-bold">
                       Phone
                     </th>
                   </tr>

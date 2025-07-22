@@ -134,6 +134,27 @@ export default function HibernateFlow() {
   const hibernateRef = useRef<HTMLDivElement>(null);
   const jpaRef = useRef<HTMLDivElement>(null);
   const databaseTableRef = useRef<HTMLTableElement>(null);
+   // New state for right card animation
+  const [showStudentObj, setShowStudentObj] = useState(false);
+  const [showAddressObj, setShowAddressObj] = useState(false);
+  const [showArrow, setShowArrow] = useState(false);
+  // Refs for arrow positioning
+  const addressIdRef = useRef<HTMLSpanElement>(null);
+  const addressObjRef = useRef<HTMLDivElement>(null);
+  const [arrowPos, setArrowPos] = useState<{start: {x: number, y: number}, end: {x: number, y: number}} | null>(null);
+  // Refs for JPA and table headers
+  const jpaBoxRef = useRef<HTMLDivElement>(null);
+  const studentHeaderRefs = useRef<(HTMLTableHeaderCellElement | null)[]>([...Array(5)].map(() => null));
+  const addressHeaderRefs = useRef<(HTMLTableHeaderCellElement | null)[]>([...Array(5)].map(() => null));
+  const [jpaToHeaders, setJpaToHeaders] = useState<{ x1: number; y1: number; x2: number; y2: number }[]>([]);
+  // State for hibernate highlight
+  const [hibernateHighlight, setHibernateHighlight] = useState(false);
+  const hibernateBoxRef = useRef<HTMLDivElement>(null);
+  const [moveObjectsDown, setMoveObjectsDown] = useState(false);
+  // New: control visibility after move down
+  const [objectsVisible, setObjectsVisible] = useState(true);
+  // New: control fade-out after move down
+  const [fadeObjects, setFadeObjects] = useState(false);
 
   // Initial student data
   const initialStudent: Student = {
@@ -145,14 +166,7 @@ export default function HibernateFlow() {
     phone: "9876543210",
   };
 
-  // New state for right card animation
-  const [showStudentObj, setShowStudentObj] = useState(false);
-  const [showAddressObj, setShowAddressObj] = useState(false);
-  const [showArrow, setShowArrow] = useState(false);
-  // Refs for arrow positioning
-  const addressIdRef = useRef<HTMLSpanElement>(null);
-  const addressObjRef = useRef<HTMLDivElement>(null);
-  const [arrowPos, setArrowPos] = useState<{start: {x: number, y: number}, end: {x: number, y: number}} | null>(null);
+ 
 
   // Address data
   const addressData = {
@@ -208,7 +222,7 @@ export default function HibernateFlow() {
         if (startEl && endEl) {
           const startRect = startEl.getBoundingClientRect();
           const endRect = endEl.getBoundingClientRect();
-          let end = {
+          const end = {
             x: endRect.left - 16,
             y: endRect.top + endRect.height / 2,
           };
@@ -231,14 +245,7 @@ export default function HibernateFlow() {
     };
   }, [showStudentObj, showAddressObj]);
 
-  // State for hibernate highlight
-  const [hibernateHighlight, setHibernateHighlight] = useState(false);
-  const hibernateBoxRef = useRef<HTMLDivElement>(null);
-  const [moveObjectsDown, setMoveObjectsDown] = useState(false);
-  // New: control visibility after move down
-  const [objectsVisible, setObjectsVisible] = useState(true);
-  // New: control fade-out after move down
-  const [fadeObjects, setFadeObjects] = useState(false);
+
 
   // After arrow is placed, highlight hibernate.cfg.xml for 1 second
   useEffect(() => {
@@ -298,11 +305,6 @@ export default function HibernateFlow() {
     setFadeObjects(false); // Reset fade
   };
 
-  // Refs for JPA and table headers
-  const jpaBoxRef = useRef<HTMLDivElement>(null);
-  const studentHeaderRefs = Array.from({ length: 5 }, () => useRef<HTMLTableCellElement>(null));
-  const addressHeaderRefs = Array.from({ length: 5 }, () => useRef<HTMLTableCellElement>(null));
-  const [jpaToHeaders, setJpaToHeaders] = useState<{ x1: number; y1: number; x2: number; y2: number }[]>([]);
 
   // Calculate lines from JPA to each column header when JPA is highlighted
   useEffect(() => {
@@ -313,9 +315,9 @@ export default function HibernateFlow() {
         y: jpaRect.top + jpaRect.height / 2,
       };
       const lines: { x1: number; y1: number; x2: number; y2: number }[] = [];
-      studentHeaderRefs.forEach((ref) => {
-        if (ref.current) {
-          const rect = ref.current.getBoundingClientRect();
+      studentHeaderRefs.current.forEach((ref) => {
+        if (ref) {
+          const rect = ref.getBoundingClientRect();
           lines.push({
             x1: jpaCenter.x,
             y1: jpaCenter.y,
@@ -324,9 +326,9 @@ export default function HibernateFlow() {
           });
         }
       });
-      addressHeaderRefs.forEach((ref) => {
-        if (ref.current) {
-          const rect = ref.current.getBoundingClientRect();
+      addressHeaderRefs.current.forEach((ref) => {
+        if (ref) {
+          const rect = ref.getBoundingClientRect();
           lines.push({
             x1: jpaCenter.x,
             y1: jpaCenter.y,
@@ -578,10 +580,10 @@ export default function HibernateFlow() {
                     <thead className="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-gray-700">
                       <tr>
                         {/* <th ref={studentHeaderRefs[0]} className="px-4 py-2 border-r">ID</th> */}
-                        <th ref={studentHeaderRefs[1]} className="px-4 py-2 border-r">NAME</th>
-                        <th ref={studentHeaderRefs[2]} className="px-4 py-2 border-r">EMAIL</th>
-                        <th ref={studentHeaderRefs[3]} className="px-4 py-2 border-r">PHONE</th>
-                        <th ref={studentHeaderRefs[4]} className="px-4 py-2">ADDRESS_ID</th>
+                        <th ref={el => { studentHeaderRefs.current[1] = el; }} className="px-4 py-2 border-r">NAME</th>
+                        <th ref={el => { studentHeaderRefs.current[2] = el; }} className="px-4 py-2 border-r">EMAIL</th>
+                        <th ref={el => { studentHeaderRefs.current[3] = el; }} className="px-4 py-2 border-r">PHONE</th>
+                        <th ref={el => { studentHeaderRefs.current[4] = el; }} className="px-4 py-2">ADDRESS_ID</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -609,11 +611,11 @@ export default function HibernateFlow() {
                   <table className="w-full text-sm text-left text-gray-800 dark:text-gray-100">
                 <thead className="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-gray-700">
                 <tr>
-                        <th ref={addressHeaderRefs[0]} className="px-4 py-2 border-r">ID</th>
-                        <th ref={addressHeaderRefs[1]} className="px-4 py-2 border-r">STREET</th>
-                        <th ref={addressHeaderRefs[2]} className="px-4 py-2 border-r">CITY</th>
-                        <th ref={addressHeaderRefs[3]} className="px-4 py-2 border-r">STATE</th>
-                        <th ref={addressHeaderRefs[4]} className="px-4 py-2">ZIPCODE</th>
+                        <th ref={el => { addressHeaderRefs.current[0] = el; }} className="px-4 py-2 border-r">ID</th>
+                        <th ref={el => { addressHeaderRefs.current[1] = el; }} className="px-4 py-2 border-r">STREET</th>
+                        <th ref={el => { addressHeaderRefs.current[2] = el; }} className="px-4 py-2 border-r">CITY</th>
+                        <th ref={el => { addressHeaderRefs.current[3] = el; }} className="px-4 py-2 border-r">STATE</th>
+                        <th ref={el => { addressHeaderRefs.current[4] = el; }} className="px-4 py-2">ZIPCODE</th>
                 </tr>
               </thead>
               <tbody>
