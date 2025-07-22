@@ -355,8 +355,8 @@ export default function HibernateFlow() {
   };
 
   return (
-    <div className={cn("min-h-screen p-8 flex flex-col items-center relative overflow-hidden transition-colors", darkMode ? "dark bg-gray-900" : "bg-gray-50")}>
-      <div className="w-full max-w-6xl border-2 border-black dark:border-gray-700 rounded-xl p-4 mb-8 bg-white dark:bg-gray-800">
+    <div className={cn("min-h-screen p-8 flex flex-col items-center relative overflow-hidden transition-colors")}>
+      <div className={cn("w-full max-w-6xl border-2 border-black dark:border-gray-700 rounded-xl p-4 mb-8", darkMode ? "dark bg-gray-900" : "bg-gray-50")}>
         {/* Heading Row with Buttons and Dark/Light Toggle */}
         <div className="w-full flex items-center justify-between mb-4">
           {/* Left: Start and Reset Buttons */}
@@ -376,7 +376,7 @@ export default function HibernateFlow() {
             </Button>
           </div>
           {/* Center: Java App Heading */}
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 text-center flex-1">Java App</h1>
+          <h1 className={cn("text-3xl font-bold text-gray-800 dark:text-gray-100 text-center flex-1", darkMode ? "text-white" : "")}>Java App</h1>
           {/* Right: Dark/Light Toggle */}
           <button
             onClick={() => setDarkMode((d) => !d)}
