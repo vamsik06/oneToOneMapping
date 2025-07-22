@@ -159,11 +159,11 @@ export default function HibernateFlow() {
   // Initial student data
   const initialStudent: Student = {
     
-    name: "Ravi Kumar",
+    name: "Ravi... ",
     marks: 85.5,
     gender: "Male",
-    email: "ravi.kumar@gma...",
-    phone: "9876543210",
+    email: "ravi.kumar@...",
+    phone: "987654...",
   };
 
  
@@ -171,10 +171,10 @@ export default function HibernateFlow() {
   // Address data
   const addressData = {
     id: 1,
-    street: "123 Kodnest...",
-    city: "Bengaluru",
-    state: "Karnataka",
-    zipcode: "560037",
+    street: "123...",
+    city: "Bengal...",
+    state: "Karn...",
+    zipcode: "5600...",
   };
 
   // Handle Start button
@@ -357,7 +357,7 @@ export default function HibernateFlow() {
   };
 
   return (
-    <div className={cn("min-h-screen p-8 flex flex-col items-center relative overflow-hidden transition-colors")}> 
+    <div className={cn("min-h-screen p-8 flex flex-col items-center relative overflow-hidden transition-colors, darkMode ? dark:bg-gray-900")}> 
       {/* Main constraint wrapper */}
       <div className="relative w-full max-w-[800px] max-h-[800px] h-full overflow-auto flex flex-col items-center justify-center border-2 border-black dark:border-gray-700 rounded-xl p-4 mb-8 bg-gray-50 dark:bg-gray-900">
         {/* Heading Row with Buttons and Dark/Light Toggle */}
@@ -456,7 +456,7 @@ export default function HibernateFlow() {
                       }}
                       exit={{ opacity: 0, scale: 0.7 }}
                       transition={{ duration: 0.4, opacity: { duration: 0.5 } }}
-                      className="absolute left-2.9 -translate-x-20 -translate-y-7 top-6 w-33 h-33 rounded-full bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 flex flex-col items-start justify-center text-xs p-4 text-left shadow z-10 text-gray-900 dark:text-gray-100"
+                      className="absolute left-2.9 -translate-x-20 -translate-y-7 top-6 w-32 h-32 rounded-full bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 flex flex-col items-start justify-center text-xs p-4 text-left shadow z-10 text-gray-900 dark:text-gray-100"
                     >
                       <span className="font-bold text-xs mb-1">Student Object</span>
                       <span className="text-xs">Name: <span className="font-medium">Ravi Kumar</span></span>
@@ -480,15 +480,15 @@ export default function HibernateFlow() {
                       }}
                       exit={{ opacity: 0, scale: 0.7 }}
                       transition={{ duration: 0.4, opacity: { duration: 0.5 } }}
-                      className="absolute right-4 -translate-x-2 -translate-y-30 top-40 w-37 h-37 rounded-full bg-orange-200 dark:bg-orange-900 border-2 border-black dark:border-gray-700 flex flex-col items-start justify-center text-xs p-4 text-left shadow-lg z-10 text-gray-900 dark:text-gray-100"
+                      className="absolute right-4 -translate-x-2 -translate-y-30 top-40 w-35 h-35 rounded-full bg-orange-200 dark:bg-orange-900 border-2 border-black dark:border-gray-700 flex flex-col items-start justify-center text-xs p-4 text-left shadow-lg z-10 text-gray-900 dark:text-gray-100"
                       ref={addressObjRef}
                     >
                       <span className="font-bold text-xs mb-1">Address Object</span>
                       <span className="text-xs">id: <span className="font-medium">1</span></span>
-                      <span className="text-xs">Street: <span className="font-medium">123 Kodnest...</span></span>
-                      <span className="text-xs">setCity: <span className="font-medium">Bengaluru</span></span>
-                      <span className="text-xs">State: <span className="font-medium">Karnataka</span></span>
-                      <span className="text-xs">Zipcode: <span className="font-medium">560037</span></span>
+                      <span className="text-xs">Street: <span className="font-medium">123...</span></span>
+                      <span className="text-xs">setCity: <span className="font-medium">Bengal...</span></span>
+                      <span className="text-xs">State: <span className="font-medium">Karn...</span></span>
+                      <span className="text-xs">Zipcode: <span className="font-medium">5600...</span></span>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -623,10 +623,10 @@ export default function HibernateFlow() {
                       {step >= 5 ? (
                         <tr>
                           <td className="px-2 py-1">1</td>
-                          <td className="px-2 py-1">123 Kodnest...</td>
-                          <td className="px-2 py-1">Bengaluru</td>
-                          <td className="px-2 py-1">Karnataka</td>
-                          <td className="px-2 py-1">560037</td>
+                          <td className="px-2 py-1">123...</td>
+                          <td className="px-2 py-1">Bengal...</td>
+                          <td className="px-2 py-1">Karn...</td>
+                          <td className="px-2 py-1">5600...</td>
                     </tr>
                       ) : null}
               </tbody>
