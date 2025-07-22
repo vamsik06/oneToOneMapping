@@ -137,7 +137,7 @@ export default function HibernateFlow() {
 
   // Initial student data
   const initialStudent: Student = {
-    id: 1,
+    
     name: "Ravi Kumar",
     marks: 85.5,
     gender: "Male",
@@ -235,6 +235,10 @@ export default function HibernateFlow() {
   const [hibernateHighlight, setHibernateHighlight] = useState(false);
   const hibernateBoxRef = useRef<HTMLDivElement>(null);
   const [moveObjectsDown, setMoveObjectsDown] = useState(false);
+  // New: control visibility after move down
+  const [objectsVisible, setObjectsVisible] = useState(true);
+  // New: control fade-out after move down
+  const [fadeObjects, setFadeObjects] = useState(false);
 
   // After arrow is placed, highlight hibernate.cfg.xml for 1 second
   useEffect(() => {
@@ -255,6 +259,30 @@ export default function HibernateFlow() {
     }
   }, [arrowPos, showStudentObj, showAddressObj]);
 
+  // New: Hide objects 1s after they move down
+  useEffect(() => {
+    if (moveObjectsDown) {
+      // Start fade after 1s
+      const fadeTimer = setTimeout(() => setFadeObjects(true), 1000);
+      // Remove from DOM after fade (0.5s)
+      const hideTimer = setTimeout(() => {
+        setObjectsVisible(false);
+      }, 1500);
+      // Advance to JPA highlight only after objects are gone
+      const jpaTimer = setTimeout(() => {
+        setStep(4);
+      }, 1550);
+      return () => {
+        clearTimeout(fadeTimer);
+        clearTimeout(hideTimer);
+        clearTimeout(jpaTimer);
+      };
+    } else {
+      setObjectsVisible(true); // Reset if flow is reset
+      setFadeObjects(false);
+    }
+  }, [moveObjectsDown]);
+
   // Reset function
   const resetFlow = () => {
     setStep(0);
@@ -266,35 +294,9 @@ export default function HibernateFlow() {
     setShowArrow(false);
     setHibernateHighlight(false);
     setMoveObjectsDown(false);
+    setObjectsVisible(true); // Reset visibility
+    setFadeObjects(false); // Reset fade
   };
-
-  // Dark mode effect
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [darkMode]);
-
-  // Auto-scroll code box
-  useEffect(() => {
-    const codeBox = codeBoxRef.current;
-    if (!codeBox) return;
-    let scrollInterval: NodeJS.Timeout | null = null;
-    const scrollSpeed = 1;
-    const scrollDelay = 50;
-    scrollInterval = setInterval(() => {
-      if (codeBox.scrollHeight - codeBox.scrollTop === codeBox.clientHeight) {
-        codeBox.scrollTop = 0;
-      } else {
-        codeBox.scrollTop += scrollSpeed;
-      }
-    }, scrollDelay);
-    return () => {
-      if (scrollInterval) clearInterval(scrollInterval);
-    };
-  }, []);
 
   // Refs for JPA and table headers
   const jpaBoxRef = useRef<HTMLDivElement>(null);
@@ -339,15 +341,39 @@ export default function HibernateFlow() {
     }
   }, [step]);
 
+  // Track if flow is running
+  const [flowRunning, setFlowRunning] = useState(false);
+
+  // Update flowRunning when Start or Reset is clicked
+  const handleStartClick = () => {
+    setFlowRunning(true);
+    handleStart();
+  };
+  const handleResetClick = () => {
+    setFlowRunning(false);
+    resetFlow();
+  };
+
   return (
-    <div className={cn("min-h-screen p-8 flex flex-col items-center relative overflow-hidden transition-colors", darkMode ? "bg-gray-900" : "bg-gray-50")}>
+    <div className={cn("min-h-screen p-8 flex flex-col items-center relative overflow-hidden transition-colors", darkMode ? "dark bg-gray-900" : "bg-gray-50")}>
       <div className="w-full max-w-6xl border-2 border-black dark:border-gray-700 rounded-xl p-4 mb-8 bg-white dark:bg-gray-800">
         {/* Heading Row with Buttons and Dark/Light Toggle */}
         <div className="w-full flex items-center justify-between mb-4">
           {/* Left: Start and Reset Buttons */}
           <div className="flex items-center gap-2">
-            <Button onClick={handleStart} className="px-4 py-2 text-sm">Start</Button>
-            <Button onClick={resetFlow} className="px-4 py-2 text-sm bg-red-500 hover:bg-red-600">Reset</Button>
+            <Button
+              onClick={handleStartClick}
+              className={`px-5 py-2 text-sm font-semibold rounded-lg shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${flowRunning ? 'bg-blue-300 text-white cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-400'}`}
+              disabled={flowRunning}
+            >
+              Start
+            </Button>
+            <Button
+              onClick={handleResetClick}
+              className={`px-5 py-2 text-sm font-semibold rounded-lg shadow transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${flowRunning ? 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-400' : 'bg-blue-100 text-blue-700 hover:bg-blue-200 focus:ring-blue-300'}`}
+            >
+              Reset
+            </Button>
           </div>
           {/* Center: Java App Heading */}
           <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 text-center flex-1">Java App</h1>
@@ -400,12 +426,12 @@ export default function HibernateFlow() {
             <div
               ref={hibernateBoxRef}
               className={
-                `absolute -bottom-15 left-0 z-10 border bg-white rounded w-[100px] h-[38px] flex flex-col items-center justify-center text-[10px] shadow transition-all duration-300 ` +
-                (hibernateHighlight ? 'border-2 border-yellow-400 bg-yellow-100 shadow-lg' : 'border-black')
+                `absolute -bottom-15 left-0 z-10 border bg-white dark:bg-gray-800 rounded w-[100px] h-[38px] flex flex-col items-center justify-center text-[10px] shadow transition-all duration-300 ` +
+                (hibernateHighlight ? 'border-2 border-yellow-400 bg-yellow-100 dark:bg-yellow-900 shadow-lg' : 'border-black dark:border-gray-700')
               }
             >
-              <span className="font-bold text-[10px] text-gray-800 leading-none">hibernate.cfg.xml</span>
-              <span className="text-[15px] text-gray-700 leading-none">&lt;/&gt;</span>
+              <span className="font-bold text-[10px] text-gray-800 dark:text-gray-100 leading-none">hibernate.cfg.xml</span>
+              <span className="text-[15px] text-gray-700 dark:text-gray-200 leading-none">&lt;/&gt;</span>
             </div>
           </Card>
           {/* Right: Empty Code Block */}
@@ -415,14 +441,19 @@ export default function HibernateFlow() {
               <div className="w-full h-full relative flex items-center justify-center">
                 {/* Student Object */}
                 <AnimatePresence>
-                  {showStudentObj && (
+                  {showStudentObj && objectsVisible && (
                     <motion.div
                       key="student-obj"
                       initial={{ opacity: 0, scale: 0.7, y: 0 }}
-                      animate={{ opacity: 1, scale: moveObjectsDown ? 0.7 : 1, x: 0, y: moveObjectsDown ? 250 : 0 }}
+                      animate={{
+                        opacity: fadeObjects ? 0 : 1,
+                        scale: moveObjectsDown ? 0.7 : 1,
+                        x: 0,
+                        y: moveObjectsDown ? 250 : 0
+                      }}
                       exit={{ opacity: 0, scale: 0.7 }}
-                      transition={{ duration: 0.4 }}
-                      className="absolute left-2.7 -translate-x-40 -translate-y-10 top-6 w-44 h-44 rounded-full bg-white border-2 border-black flex flex-col items-start justify-center text-xs p-4 text-left shadow z-10 text-gray-900"
+                      transition={{ duration: 0.4, opacity: { duration: 0.5 } }}
+                      className="absolute left-2.7 -translate-x-40 -translate-y-10 top-6 w-44 h-44 rounded-full bg-white dark:bg-gray-800 border-2 border-black dark:border-gray-700 flex flex-col items-start justify-center text-xs p-4 text-left shadow z-10 text-gray-900 dark:text-gray-100"
                     >
                       <span className="font-bold text-xs mb-1">Student Object</span>
                       <span className="text-xs">Name: <span className="font-medium">Ravi Kumar</span></span>
@@ -434,14 +465,19 @@ export default function HibernateFlow() {
                 </AnimatePresence>
                 {/* Address Object */}
                 <AnimatePresence>
-                  {showAddressObj && (
+                  {showAddressObj && objectsVisible && (
                     <motion.div
                       key="address-obj"
                       initial={{ opacity: 0, scale: 0.7, y:20 }}
-                      animate={{ opacity: 1, scale: moveObjectsDown ? 0.7 : 1, x: 0, y: moveObjectsDown ? 250 : 0 }}
+                      animate={{
+                        opacity: fadeObjects ? 0 : 1,
+                        scale: moveObjectsDown ? 0.7 : 1,
+                        x: 0,
+                        y: moveObjectsDown ? 250 : 0
+                      }}
                       exit={{ opacity: 0, scale: 0.7 }}
-                      transition={{ duration: 0.4 }}
-                      className="absolute right-4 -translate-x-15 -translate-y-30 top-40 w-44 h-44 rounded-full bg-orange-200 border-2 border-black flex flex-col items-start justify-center text-xs p-4 text-left shadow-lg z-10 text-gray-900"
+                      transition={{ duration: 0.4, opacity: { duration: 0.5 } }}
+                      className="absolute right-4 -translate-x-15 -translate-y-30 top-40 w-44 h-44 rounded-full bg-orange-200 dark:bg-orange-900 border-2 border-black dark:border-gray-700 flex flex-col items-start justify-center text-xs p-4 text-left shadow-lg z-10 text-gray-900 dark:text-gray-100"
                       ref={addressObjRef}
                     >
                       <span className="font-bold text-xs mb-1">Address Object</span>
@@ -454,7 +490,7 @@ export default function HibernateFlow() {
                   )}
                 </AnimatePresence>
                 {/* Arrow from address_id to Address Object */}
-                {arrowPos && (
+                {arrowPos && objectsVisible && (
                   <svg
                     className="pointer-events-none fixed top-0 left-0 z-50"
                     style={{ width: '100vw', height: '100vh', pointerEvents: 'none' }}
@@ -473,10 +509,11 @@ export default function HibernateFlow() {
                       strokeWidth="3"
                       markerEnd="url(#arrowhead2)"
                       animate={{
+                        opacity: fadeObjects ? 0 : 1,
                         y1: moveObjectsDown ? arrowPos.start.y + 250 : arrowPos.start.y,
                         y2: moveObjectsDown ? arrowPos.end.y + 250 : arrowPos.end.y,
                       }}
-                      transition={{ duration: 0.4 }}
+                      transition={{ duration: 0.4, opacity: { duration: 0.5 } }}
                     />
                   </svg>
                 )}
@@ -540,7 +577,7 @@ export default function HibernateFlow() {
                   <table className="w-full text-sm text-left text-gray-800 dark:text-gray-100">
                     <thead className="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-gray-700">
                       <tr>
-                        <th ref={studentHeaderRefs[0]} className="px-4 py-2 border-r">ID</th>
+                        {/* <th ref={studentHeaderRefs[0]} className="px-4 py-2 border-r">ID</th> */}
                         <th ref={studentHeaderRefs[1]} className="px-4 py-2 border-r">NAME</th>
                         <th ref={studentHeaderRefs[2]} className="px-4 py-2 border-r">EMAIL</th>
                         <th ref={studentHeaderRefs[3]} className="px-4 py-2 border-r">PHONE</th>
@@ -550,10 +587,10 @@ export default function HibernateFlow() {
                     <tbody>
                       {step >= 5 ? (
                         <tr>
-                          <td className="px-4 py-2">{initialStudent.id}</td>
-                          <td className="px-4 py-2">{initialStudent.name}</td>
-                          <td className="px-4 py-2">{initialStudent.email}</td>
-                          <td className="px-4 py-2">{initialStudent.phone}</td>
+                          {/* <td className="px-4 py-2">{initialStudent.id}</td> */}
+                          <td className="px-4 py-2 text-gray-800 dark:text-gray-100">{initialStudent.name}</td>
+                          <td className="px-4 py-2 text-gray-800 dark:text-gray-100">{initialStudent.email}</td>
+                          <td className="px-4 py-2 text-gray-800 dark:text-gray-100">{initialStudent.phone}</td>
                           <td className="px-4 py-2">1</td>
                         </tr>
                       ) : null}
