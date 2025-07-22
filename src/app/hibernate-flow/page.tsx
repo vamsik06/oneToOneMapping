@@ -171,7 +171,7 @@ export default function HibernateFlow() {
   // Address data
   const addressData = {
     id: 1,
-    street: "123...",
+    street: "123 Kodnest...",
     city: "Bengal...",
     state: "Karn...",
     zipcode: "5600...",
@@ -357,9 +357,9 @@ export default function HibernateFlow() {
   };
 
   return (
-    <div className={cn("min-h-screen p-8 flex flex-col items-center relative overflow-hidden transition-colors, darkMode ? dark:bg-gray-900")}> 
+    <div className={cn("min-h-screen p-8 flex flex-col items-center relative overflow-hidden transition-colors")}> 
       {/* Main constraint wrapper */}
-      <div className="relative w-full max-w-[800px] max-h-[800px] h-full overflow-auto flex flex-col items-center justify-center border-2 border-black dark:border-gray-700 rounded-xl p-4 mb-8 bg-gray-50 dark:bg-gray-900">
+      <div className={cn("relative w-full max-w-[800px] max-h-[800px] h-full overflow-auto flex flex-col items-center justify-center border-2 border-black dark:border-gray-700 rounded-xl p-4 mb-8", darkMode ? "bg-gray-900" : "bg-gray-50")}>
         {/* Heading Row with Buttons and Dark/Light Toggle */}
         <div className="w-full flex items-center justify-between mb-4">
           {/* Left: Start and Reset Buttons */}
@@ -485,7 +485,7 @@ export default function HibernateFlow() {
                     >
                       <span className="font-bold text-xs mb-1">Address Object</span>
                       <span className="text-xs">id: <span className="font-medium">1</span></span>
-                      <span className="text-xs">Street: <span className="font-medium">123...</span></span>
+                      <span className="text-xs">Street: <span className="font-medium">123 Kodnest...</span></span>
                       <span className="text-xs">setCity: <span className="font-medium">Bengal...</span></span>
                       <span className="text-xs">State: <span className="font-medium">Karn...</span></span>
                       <span className="text-xs">Zipcode: <span className="font-medium">5600...</span></span>
@@ -623,7 +623,7 @@ export default function HibernateFlow() {
                       {step >= 5 ? (
                         <tr>
                           <td className="px-2 py-1">1</td>
-                          <td className="px-2 py-1">123...</td>
+                          <td className="px-2 py-1">123 Kodnest...</td>
                           <td className="px-2 py-1">Bengal...</td>
                           <td className="px-2 py-1">Karn...</td>
                           <td className="px-2 py-1">5600...</td>
