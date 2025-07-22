@@ -379,7 +379,7 @@ export default function HibernateFlow() {
             </Button>
           </div>
           {/* Center: Java App Heading */}
-          <h1 className={cn("text-3xl font-bold text-gray-800 dark:text-gray-100 text-center flex-1", darkMode ? "text-white" : "")}>Java App</h1>
+          <h1 className={cn("text-2xl font-bold -translate-x-13 text-gray-800 dark:text-gray-100 text-center ", darkMode ? "text-white" : "")}>Java App</h1>
           {/* Right: Dark/Light Toggle */}
           <button
             onClick={() => setDarkMode((d) => !d)}
@@ -604,7 +604,7 @@ export default function HibernateFlow() {
             </div>
             {/* Address Table */}
             <div className="flex-1">
-              <Card className="border-2 border-black dark:border-gray-700 relative p-1 bg-white dark:bg-gray-800 h-full max-h-full">
+              <Card className="border-2 border-black dark:border-gray-700 relative  bg-white dark:bg-gray-800 h-full max-h-full">
           <CardHeader>
                   <CardTitle className="text-center text-base text-gray-800 dark:text-gray-100">Address Table</CardTitle>
           </CardHeader>
