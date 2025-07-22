@@ -39,7 +39,7 @@ public class Application {
         student.setName("Ravi Kumar");
         student.setMarks(85.5);
         student.setGender("Male");
-        student.setEmail("ravi.kumar@gmail.com");
+        student.setEmail("ravi.kumar@gma...");
         student.setPhone("9876543210");
         session.persist(student);
 

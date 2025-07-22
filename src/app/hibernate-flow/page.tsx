@@ -162,7 +162,7 @@ export default function HibernateFlow() {
     name: "Ravi Kumar",
     marks: 85.5,
     gender: "Male",
-    email: "ravi.kumar@gmail.com",
+    email: "ravi.kumar@gma...",
     phone: "9876543210",
   };
 
@@ -404,11 +404,11 @@ export default function HibernateFlow() {
       {/* Main content layout */}
       <div className="w-full h-full flex flex-col gap-4 relative z-0">
         {/* Code Blocks Section: Left block with both codes side by side, right block empty */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[220px] max-h-[220px]">
+        <div className="grid grid-cols-2 gap-4 h-[220px] max-h-[220px]">
           {/* Left: Combined Code Block */}
           <Card className="relative border-2 border-black dark:border-gray-700 bg-white dark:bg-gray-800 p-0 flex flex-col h-full max-h-full">
             <CardContent className="p-0">
-              <div className="flex flex-col md:flex-row min-h-0 items-stretch">
+              <div className="flex flex-row min-h-0 items-stretch">
                 {/* Student.java */}
                 <div className="flex-1 flex flex-col min-w-0 border-b md:border-b-0 md:border-r border-gray-700">
                   <div className="bg-gray-800 text-yellow-300 text-xs font-semibold px-3 py-2 border-b border-gray-700">Student.java</div>
@@ -460,7 +460,7 @@ export default function HibernateFlow() {
                     >
                       <span className="font-bold text-xs mb-1">Student Object</span>
                       <span className="text-xs">Name: <span className="font-medium">Ravi Kumar</span></span>
-                      <span className="text-xs truncate">Email: <span className="font-medium">ravi.kumar@gmail.com</span></span>
+                      <span className="text-xs truncate">Email: <span className="font-medium">ravi.kumar@gm.....</span></span>
                       <span className="text-xs">Phone: <span className="font-medium">9876543210</span></span>
                       <span className="text-xs">address_id: <span ref={addressIdRef} className="font-medium">1</span></span>
                     </motion.div>
@@ -552,7 +552,7 @@ export default function HibernateFlow() {
             </div>
 
           {/* Database Tables Side by Side */}
-          <div className="flex flex-col md:flex-row gap-4 w-full mt-2 relative max-h-[180px]">
+          <div className="flex flex-row gap-4 w-full mt-2 relative max-h-[180px]">
             {/* JPA to Table Header Lines */}
             {step === 4 && jpaToHeaders.length > 0 && (
               <svg className="pointer-events-none fixed top-0 left-0 z-50" style={{ width: '100vw', height: '100vh', pointerEvents: 'none' }}>
