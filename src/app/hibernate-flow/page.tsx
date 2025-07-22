@@ -296,6 +296,49 @@ export default function HibernateFlow() {
     };
   }, []);
 
+  // Refs for JPA and table headers
+  const jpaBoxRef = useRef<HTMLDivElement>(null);
+  const studentHeaderRefs = Array.from({ length: 5 }, () => useRef<HTMLTableCellElement>(null));
+  const addressHeaderRefs = Array.from({ length: 5 }, () => useRef<HTMLTableCellElement>(null));
+  const [jpaToHeaders, setJpaToHeaders] = useState<{ x1: number; y1: number; x2: number; y2: number }[]>([]);
+
+  // Calculate lines from JPA to each column header when JPA is highlighted
+  useEffect(() => {
+    if (step === 4 && jpaBoxRef.current) {
+      const jpaRect = jpaBoxRef.current.getBoundingClientRect();
+      const jpaCenter = {
+        x: jpaRect.left + jpaRect.width / 2,
+        y: jpaRect.top + jpaRect.height / 2,
+      };
+      const lines: { x1: number; y1: number; x2: number; y2: number }[] = [];
+      studentHeaderRefs.forEach((ref) => {
+        if (ref.current) {
+          const rect = ref.current.getBoundingClientRect();
+          lines.push({
+            x1: jpaCenter.x,
+            y1: jpaCenter.y,
+            x2: rect.left + rect.width / 2,
+            y2: rect.top + rect.height / 2,
+          });
+        }
+      });
+      addressHeaderRefs.forEach((ref) => {
+        if (ref.current) {
+          const rect = ref.current.getBoundingClientRect();
+          lines.push({
+            x1: jpaCenter.x,
+            y1: jpaCenter.y,
+            x2: rect.left + rect.width / 2,
+            y2: rect.top + rect.height / 2,
+          });
+        }
+      });
+      setJpaToHeaders(lines);
+    } else {
+      setJpaToHeaders([]);
+    }
+  }, [step]);
+
   return (
     <div className={cn("min-h-screen p-8 flex flex-col items-center relative overflow-hidden transition-colors", darkMode ? "bg-gray-900" : "bg-gray-50")}>
       <div className="w-full max-w-6xl border-2 border-black dark:border-gray-700 rounded-xl p-4 mb-8 bg-white dark:bg-gray-800">
@@ -452,28 +495,41 @@ export default function HibernateFlow() {
               {/* Hibernate Label */}
               <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 px-4 font-bold text-2xl text-gray-800 dark:text-gray-100">Hibernate</div>
               {/* JPA Box with highlight animation */}
-              <div ref={jpaRef} className={cn(
+              <div
+                ref={el => {
+                  jpaRef.current = el;
+                  jpaBoxRef.current = el;
+                }}
+                className={cn(
                 "absolute left-1/2 bottom-10 -translate-x-1/2 translate-y-1/2 border-2 bg-white dark:bg-gray-800 w-48 h-16 flex items-center justify-center",
                 step === 4 && "border-yellow-400 shadow-[0_0_12px_4px_rgba(255,221,51,0.5)] animate-pulse",
                 "border-black dark:border-gray-700"
-              )}>
+                )}
+              >
                 <span className="font-bold text-xl text-gray-800 dark:text-gray-100">JPA</span>
         </div>
-              {/* Animate vertical lines to database */}
-              {step === 5 && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 120, opacity: 1 }}
-                  transition={{ duration: 1 }}
-                  className="absolute left-1/2 bottom-0 w-1 bg-yellow-400"
-                  style={{ height: 120 }}
-                />
-              )}
+              </div>
             </div>
-        </div>
 
           {/* Database Tables Side by Side */}
-          <div className="flex flex-col md:flex-row gap-4 w-full mt-4">
+          <div className="flex flex-col md:flex-row gap-4 w-full mt-4 relative">
+            {/* JPA to Table Header Lines */}
+            {step === 4 && jpaToHeaders.length > 0 && (
+              <svg className="pointer-events-none fixed top-0 left-0 z-50" style={{ width: '100vw', height: '100vh', pointerEvents: 'none' }}>
+                {jpaToHeaders.map((line, idx) => (
+                  <line
+                    key={idx}
+                    x1={line.x1}
+                    y1={line.y1}
+                    x2={line.x2}
+                    y2={line.y2}
+                    stroke="#facc15"
+                    strokeWidth="3"
+                    style={{ opacity: 0.85 }}
+                  />
+                ))}
+              </svg>
+            )}
             {/* Student Table */}
             <div className="flex-1">
               <Card className="border-2 border-black dark:border-gray-700 relative p-4 bg-white dark:bg-gray-800">
@@ -484,21 +540,23 @@ export default function HibernateFlow() {
                   <table className="w-full text-sm text-left text-gray-800 dark:text-gray-100">
                     <thead className="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-gray-700">
                       <tr>
-                        <th className="px-4 py-2 border-r">ID</th>
-                        <th className="px-4 py-2 border-r">NAME</th>
-                        <th className="px-4 py-2 border-r">EMAIL</th>
-                        <th className="px-4 py-2 border-r">PHONE</th>
-                        <th className="px-4 py-2">ADDRESS_ID</th>
+                        <th ref={studentHeaderRefs[0]} className="px-4 py-2 border-r">ID</th>
+                        <th ref={studentHeaderRefs[1]} className="px-4 py-2 border-r">NAME</th>
+                        <th ref={studentHeaderRefs[2]} className="px-4 py-2 border-r">EMAIL</th>
+                        <th ref={studentHeaderRefs[3]} className="px-4 py-2 border-r">PHONE</th>
+                        <th ref={studentHeaderRefs[4]} className="px-4 py-2">ADDRESS_ID</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td className="px-4 py-2">{initialStudent.id}</td>
-                        <td className="px-4 py-2">{initialStudent.name}</td>
-                        <td className="px-4 py-2">{initialStudent.email}</td>
-                        <td className="px-4 py-2">{initialStudent.phone}</td>
-                        <td className="px-4 py-2">1</td>
-                      </tr>
+                      {step >= 5 ? (
+                        <tr>
+                          <td className="px-4 py-2">{initialStudent.id}</td>
+                          <td className="px-4 py-2">{initialStudent.name}</td>
+                          <td className="px-4 py-2">{initialStudent.email}</td>
+                          <td className="px-4 py-2">{initialStudent.phone}</td>
+                          <td className="px-4 py-2">1</td>
+                        </tr>
+                      ) : null}
                     </tbody>
                   </table>
                 </CardContent>
@@ -507,32 +565,34 @@ export default function HibernateFlow() {
             {/* Address Table */}
             <div className="flex-1">
               <Card className="border-2 border-black dark:border-gray-700 relative p-4 bg-white dark:bg-gray-800">
-                <CardHeader>
+          <CardHeader>
                   <CardTitle className="text-center text-xl text-gray-800 dark:text-gray-100">Address Table</CardTitle>
-                </CardHeader>
-                <CardContent className="overflow-x-auto">
+          </CardHeader>
+          <CardContent className="overflow-x-auto">
                   <table className="w-full text-sm text-left text-gray-800 dark:text-gray-100">
-                    <thead className="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-gray-700">
-                      <tr>
-                        <th className="px-4 py-2 border-r">ID</th>
-                        <th className="px-4 py-2 border-r">STREET</th>
-                        <th className="px-4 py-2 border-r">CITY</th>
-                        <th className="px-4 py-2 border-r">STATE</th>
-                        <th className="px-4 py-2">ZIPCODE</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td className="px-4 py-2">1</td>
-                        <td className="px-4 py-2">123 Kodnest Lane</td>
-                        <td className="px-4 py-2">Bengaluru</td>
-                        <td className="px-4 py-2">Karnataka</td>
-                        <td className="px-4 py-2">560037</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </CardContent>
-              </Card>
+                <thead className="text-xs text-gray-700 dark:text-gray-200 uppercase bg-gray-50 dark:bg-gray-700">
+                <tr>
+                        <th ref={addressHeaderRefs[0]} className="px-4 py-2 border-r">ID</th>
+                        <th ref={addressHeaderRefs[1]} className="px-4 py-2 border-r">STREET</th>
+                        <th ref={addressHeaderRefs[2]} className="px-4 py-2 border-r">CITY</th>
+                        <th ref={addressHeaderRefs[3]} className="px-4 py-2 border-r">STATE</th>
+                        <th ref={addressHeaderRefs[4]} className="px-4 py-2">ZIPCODE</th>
+                </tr>
+              </thead>
+              <tbody>
+                      {step >= 5 ? (
+                        <tr>
+                          <td className="px-4 py-2">1</td>
+                          <td className="px-4 py-2">123 Kodnest Lane</td>
+                          <td className="px-4 py-2">Bengaluru</td>
+                          <td className="px-4 py-2">Karnataka</td>
+                          <td className="px-4 py-2">560037</td>
+                    </tr>
+                      ) : null}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
             </div>
           </div>
       </div>
